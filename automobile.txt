@@ -1,0 +1,959 @@
+OK __main__ :> regressor . cr
+LinearRegressor(
+    params = {
+        'head' :  < tensorflow.contrib.learn.python.learn.estimators.head._RegressionHead object at 0x000002025CBB29B0 > ,
+        'feature_columns' : [
+            _NumericColumn(key = 'symboling', shape = (1, ), default_value = None, dtype = tf.float32, normalizer_fn = None), 
+            _NumericColumn(key = 'normalized-losses', shape = (1, ), default_value = None, dtype = tf.float32, normalizer_fn = None), 
+            _HashedCategoricalColumn(key = 'make', hash_bucket_size = 50, dtype = tf.string), 
+            _VocabularyListCategoricalColumn(key = 'fuel-type', vocabulary_list = ('diesel', 'gas'), dtype = tf.string, default_value = -1, num_oov_buckets = 0), 
+            _VocabularyListCategoricalColumn(key = 'aspiration', vocabulary_list = ('std', 'turbo'), dtype = tf.string, default_value = -1, num_oov_buckets = 0), 
+            _VocabularyListCategoricalColumn(key = 'num-of-doors', vocabulary_list = ('two', 'four'), dtype = tf.string, default_value = -1, num_oov_buckets = 0), 
+            _VocabularyListCategoricalColumn(key = 'body-style', vocabulary_list = ('hardtop', 'wagon', 'sedan', 'hatchback', 'convertible'), dtype = tf.string, default_value = -1, num_oov_buckets = 0), 
+            _VocabularyListCategoricalColumn(key = 'drive-wheels', vocabulary_list = ('4wd', 'rwd', 'fwd'), dtype = tf.string, default_value = -1, num_oov_buckets = 0), 
+            _VocabularyListCategoricalColumn(key = 'engine-location', vocabulary_list = ('front', 'rear'), dtype = tf.string, default_value = -1, num_oov_buckets = 0), 
+            _NumericColumn(key = 'wheel-base', shape = (1, ), default_value = None, dtype = tf.float32, normalizer_fn = None), 
+            _NumericColumn(key = 'length', shape = (1, ), default_value = None, dtype = tf.float32, normalizer_fn = None), 
+            _NumericColumn(key = 'width', shape = (1, ), default_value = None, dtype = tf.float32, normalizer_fn = None), 
+            _NumericColumn(key = 'height', shape = (1, ), default_value = None, dtype = tf.float32, normalizer_fn = None), 
+            _NumericColumn(key = 'curb-weight', shape = (1, ), default_value = None, dtype = tf.float32, normalizer_fn = None), 
+            _VocabularyListCategoricalColumn(key = 'engine-type', vocabulary_list = ('dohc', 'dohcv', 'l', 'ohc', 'ohcf', 'ohcv', 'rotor'), dtype = tf.string, default_value = -1, num_oov_buckets = 0), 
+            _VocabularyListCategoricalColumn(key = 'num-of-cylinders', vocabulary_list = ('eight', 'five', 'four', 'six', 'three', 'twelve', 'two'), dtype = tf.string, default_value = -1, num_oov_buckets = 0), 
+            _NumericColumn(key = 'engine-size', shape = (1, ), default_value = None, dtype = tf.float32, normalizer_fn = None), 
+            _VocabularyListCategoricalColumn(key = 'fuel-system', vocabulary_list = ('1bbl', '2bbl', '4bbl', 'idi', 'mfi', 'mpfi', 'spdi', 'spfi'), dtype = tf.string, default_value = -1, num_oov_buckets = 0), 
+            _NumericColumn(key = 'bore', shape = (1, ), default_value = None, dtype = tf.float32, normalizer_fn = None), 
+            _NumericColumn(key = 'stroke', shape = (1, ), default_value = None, dtype = tf.float32, normalizer_fn = None), 
+            _NumericColumn(key = 'compression-ratio', shape = (1, ), default_value = None, dtype = tf.float32, normalizer_fn = None), 
+            _NumericColumn(key = 'horsepower', shape = (1, ), default_value = None, dtype = tf.float32, normalizer_fn = None), 
+            _NumericColumn(key = 'peak-rpm', shape = (1, ), default_value = None, dtype = tf.float32, normalizer_fn = None), 
+            _NumericColumn(key = 'city-mpg', shape = (1, ), default_value = None, dtype = tf.float32, normalizer_fn = None), 
+            _NumericColumn(key = 'highway-mpg', shape = (1, ), default_value = None, dtype = tf.float32, normalizer_fn = None)
+            ],
+        'optimizer' : None,
+        'gradient_clip_norm' : None,
+        'joint_weights' : False
+    }
+)
+
+OK
+Failed in </py> (compiling=False): Couldn't find trained model at C:\Users\hcche\AppData\Local\Temp\tmp4ivv0v9j.
+copy /s c:\tmp\output_dir c:\Users\hcche\AppData\Local\Temp\tmp4ivv0v9j 
+is a feasible workaround
+
+[x] model_dir 會有問題，還得從上面 learn_runner 
+    的結果抄過去才能 predict ... 這樣對嗎？參考老師的原稿，定義 regressor 時
+    跑出來的 model_dir 都是隨機的。上面的 regressor 可能與 learn_runner 無關！
+    既然 copy 整個 model_dir 給 regressor 有效，那麼定義 regressor 時直接設定
+    model_dir 給它行不行？ 或者，learn_runner 的結果有沒有可用的傳回值？
+    [x] learn_runner 的結果如下： 
+        OK __main__ :> result . cr
+        ({'loss': 8134106.0, 'global_step': 10000}, [])
+        OK
+        [ ] 這個 loss 的值也不知道啥意思？
+    [x] 倒是定義 regressor 時直接設定 model_dir 給它就對了！
+        regressor = tf.contrib.learn.LinearRegressor(
+            feature_columns=linear_features,model_dir="/tmp/output_dir")
+        然後就可以用 regressor 來 predict.
+[x] OK __main__ :> regressor.model_dir . cr ==> /tmp/output_dir
+    regressor 的 model_dir attribute 是可以查看的。
+[x] 線索應該在 experiment_fn 裡面，餵給 learn_runner 之前應該把 experiment_fn
+    保留下來。 
+    --> Yeah! 直接定義出 forth word estimator 
+        __main__ :> eval_data py> dict(pop())
+        estimator :> predict(x=pop()) <py> [i for i in tos()] </pyV> .s
+
+    
+__main__ :> eval_data py> dict(pop())
+__main__ :> regressor.predict(x=pop()) .s
+constant result result <py> [i for i in tos()] </pyV> .s
+
+OK result <py> [i for i in tos()] </pyV> .s cr
+      0: <generator object _as_iterable at 0x0000020260E922B0> (<class 'generator'>)
+      1: [
+      8960.8164, 
+      8341.9082, 
+      8574.4316, 
+      14133.244, 
+      14101.896, 
+      14165.926, 
+      15222.57, 
+      15443.336, 
+      17531.807, 
+      13073.979, 
+      13211.522, 
+      13809.206, 
+      13844.28, 
+      14154.028, 
+      17587.508, 
+      17921.92, 
+      20356.814, 
+      21757.881, 
+      9297.3418, 
+      9746.0703, 
+      9737.7861, 
+      10186.516, 
+      10680.238, 
+      10931.681, 
+      10920.594, 
+      12064.827, 
+      7673.5229, 
+      16225.116, 
+      14583.919, 
+      14185.98, 
+      16600.213, 
+      17974.174, 
+      16759.525, 
+      18015.932, 
+      19038.873, 
+      20334.467, 
+      17035.037, 
+      18981.264, 
+      18625.998, 
+      19664.51, 
+      18031.885
+      ] 
+      (<class 'list'>)
+
+OK __main__ :> eval_data . cr
+     symboling  normalized-losses        make fuel-type aspiration  \
+164          1              168.0      toyota       gas        std
+165          1              168.0      toyota       gas        std
+166          1              168.0      toyota       gas        std
+167          2              134.0      toyota       gas        std
+168          2              134.0      toyota       gas        std
+169          2              134.0      toyota       gas        std
+170          2              134.0      toyota       gas        std
+171          2              134.0      toyota       gas        std
+172          2              134.0      toyota       gas        std
+173         -1               65.0      toyota       gas        std
+174         -1               65.0      toyota    diesel      turbo
+175         -1               65.0      toyota       gas        std
+176         -1               65.0      toyota       gas        std
+177         -1               65.0      toyota       gas        std
+178          3              197.0      toyota       gas        std
+179          3              197.0      toyota       gas        std
+180         -1               90.0      toyota       gas        std
+181         -1                0.0      toyota       gas        std
+182          2              122.0  volkswagen    diesel        std
+183          2              122.0  volkswagen       gas        std
+184          2               94.0  volkswagen    diesel        std
+185          2               94.0  volkswagen       gas        std
+186          2               94.0  volkswagen       gas        std
+187          2               94.0  volkswagen    diesel      turbo
+188          2               94.0  volkswagen       gas        std
+189          3                0.0  volkswagen       gas        std
+190          3              256.0  volkswagen       gas        std
+191          0                0.0  volkswagen       gas        std
+192          0                0.0  volkswagen    diesel      turbo
+193          0                0.0  volkswagen       gas        std
+194         -2              103.0       volvo       gas        std
+195         -1               74.0       volvo       gas        std
+196         -2              103.0       volvo       gas        std
+197         -1               74.0       volvo       gas        std
+198         -2              103.0       volvo       gas      turbo
+199         -1               74.0       volvo       gas      turbo
+200         -1               95.0       volvo       gas        std
+201         -1               95.0       volvo       gas      turbo
+202         -1               95.0       volvo       gas        std
+203         -1               95.0       volvo    diesel      turbo
+204         -1               95.0       volvo       gas      turbo
+
+    num-of-doors   body-style drive-wheels engine-location  wheel-base  \
+164          two    hatchback          rwd           front   94.500000
+165          two        sedan          rwd           front   94.500000
+166          two    hatchback          rwd           front   94.500000
+167          two      hardtop          rwd           front   98.400002
+168          two      hardtop          rwd           front   98.400002
+169          two    hatchback          rwd           front   98.400002
+170          two      hardtop          rwd           front   98.400002
+171          two    hatchback          rwd           front   98.400002
+172          two  convertible          rwd           front   98.400002
+173         four        sedan          fwd           front  102.400002
+174         four        sedan          fwd           front  102.400002
+175         four    hatchback          fwd           front  102.400002
+176         four        sedan          fwd           front  102.400002
+177         four    hatchback          fwd           front  102.400002
+178          two    hatchback          rwd           front  102.900002
+179          two    hatchback          rwd           front  102.900002
+180         four        sedan          rwd           front  104.500000
+181         four        wagon          rwd           front  104.500000
+182          two        sedan          fwd           front   97.300003
+183          two        sedan          fwd           front   97.300003
+184         four        sedan          fwd           front   97.300003
+185         four        sedan          fwd           front   97.300003
+186         four        sedan          fwd           front   97.300003
+187         four        sedan          fwd           front   97.300003
+188         four        sedan          fwd           front   97.300003
+189          two  convertible          fwd           front   94.500000
+190          two    hatchback          fwd           front   94.500000
+191         four        sedan          fwd           front  100.400002
+192         four        sedan          fwd           front  100.400002
+193         four        wagon          fwd           front  100.400002
+194         four        sedan          rwd           front  104.300003
+195         four        wagon          rwd           front  104.300003
+196         four        sedan          rwd           front  104.300003
+197         four        wagon          rwd           front  104.300003
+198         four        sedan          rwd           front  104.300003
+199         four        wagon          rwd           front  104.300003
+200         four        sedan          rwd           front  109.099998
+201         four        sedan          rwd           front  109.099998
+202         four        sedan          rwd           front  109.099998
+203         four        sedan          rwd           front  109.099998
+204         four        sedan          rwd           front  109.099998
+
+        ...       num-of-cylinders  engine-size  fuel-system  bore stroke  \
+164     ...                   four         98.0         2bbl  3.19   3.03
+165     ...                   four         98.0         mpfi  3.24   3.08
+166     ...                   four         98.0         mpfi  3.24   3.08
+167     ...                   four        146.0         mpfi  3.62   3.50
+168     ...                   four        146.0         mpfi  3.62   3.50
+169     ...                   four        146.0         mpfi  3.62   3.50
+170     ...                   four        146.0         mpfi  3.62   3.50
+171     ...                   four        146.0         mpfi  3.62   3.50
+172     ...                   four        146.0         mpfi  3.62   3.50
+173     ...                   four        122.0         mpfi  3.31   3.54
+174     ...                   four        110.0          idi  3.27   3.35
+175     ...                   four        122.0         mpfi  3.31   3.54
+176     ...                   four        122.0         mpfi  3.31   3.54
+177     ...                   four        122.0         mpfi  3.31   3.54
+178     ...                    six        171.0         mpfi  3.27   3.35
+179     ...                    six        171.0         mpfi  3.27   3.35
+180     ...                    six        171.0         mpfi  3.27   3.35
+181     ...                    six        161.0         mpfi  3.27   3.35
+182     ...                   four         97.0          idi  3.01   3.40
+183     ...                   four        109.0         mpfi  3.19   3.40
+184     ...                   four         97.0          idi  3.01   3.40
+185     ...                   four        109.0         mpfi  3.19   3.40
+186     ...                   four        109.0         mpfi  3.19   3.40
+187     ...                   four         97.0          idi  3.01   3.40
+188     ...                   four        109.0         mpfi  3.19   3.40
+189     ...                   four        109.0         mpfi  3.19   3.40
+190     ...                   four        109.0         mpfi  3.19   3.40
+191     ...                   five        136.0         mpfi  3.19   3.40
+192     ...                   four         97.0          idi  3.01   3.40
+193     ...                   four        109.0         mpfi  3.19   3.40
+194     ...                   four        141.0         mpfi  3.78   3.15
+195     ...                   four        141.0         mpfi  3.78   3.15
+196     ...                   four        141.0         mpfi  3.78   3.15
+197     ...                   four        141.0         mpfi  3.78   3.15
+198     ...                   four        130.0         mpfi  3.62   3.15
+199     ...                   four        130.0         mpfi  3.62   3.15
+200     ...                   four        141.0         mpfi  3.78   3.15
+201     ...                   four        141.0         mpfi  3.78   3.15
+202     ...                    six        173.0         mpfi  3.58   2.87
+203     ...                    six        145.0          idi  3.01   3.40
+204     ...                   four        141.0         mpfi  3.78   3.15
+
+    compression-ratio  horsepower peak-rpm  city-mpg  highway-mpg
+164               9.0        70.0   4800.0      29.0         34.0
+165               9.4       112.0   6600.0      26.0         29.0
+166               9.4       112.0   6600.0      26.0         29.0
+167               9.3       116.0   4800.0      24.0         30.0
+168               9.3       116.0   4800.0      24.0         30.0
+169               9.3       116.0   4800.0      24.0         30.0
+170               9.3       116.0   4800.0      24.0         30.0
+171               9.3       116.0   4800.0      24.0         30.0
+172               9.3       116.0   4800.0      24.0         30.0
+173               8.7        92.0   4200.0      29.0         34.0
+174              22.5        73.0   4500.0      30.0         33.0
+175               8.7        92.0   4200.0      27.0         32.0
+176               8.7        92.0   4200.0      27.0         32.0
+177               8.7        92.0   4200.0      27.0         32.0
+178               9.3       161.0   5200.0      20.0         24.0
+179               9.3       161.0   5200.0      19.0         24.0
+180               9.2       156.0   5200.0      20.0         24.0
+181               9.2       156.0   5200.0      19.0         24.0
+182              23.0        52.0   4800.0      37.0         46.0
+183               9.0        85.0   5250.0      27.0         34.0
+184              23.0        52.0   4800.0      37.0         46.0
+185               9.0        85.0   5250.0      27.0         34.0
+186               9.0        85.0   5250.0      27.0         34.0
+187              23.0        68.0   4500.0      37.0         42.0
+188              10.0       100.0   5500.0      26.0         32.0
+189               8.5        90.0   5500.0      24.0         29.0
+190               8.5        90.0   5500.0      24.0         29.0
+191               8.5       110.0   5500.0      19.0         24.0
+192              23.0        68.0   4500.0      33.0         38.0
+193               9.0        88.0   5500.0      25.0         31.0
+194               9.5       114.0   5400.0      23.0         28.0
+195               9.5       114.0   5400.0      23.0         28.0
+196               9.5       114.0   5400.0      24.0         28.0
+197               9.5       114.0   5400.0      24.0         28.0
+198               7.5       162.0   5100.0      17.0         22.0
+199               7.5       162.0   5100.0      17.0         22.0
+200               9.5       114.0   5400.0      23.0         28.0
+201               8.7       160.0   5300.0      19.0         25.0
+202               8.8       134.0   5500.0      18.0         23.0
+203              23.0       106.0   4800.0      26.0         27.0
+204               9.5       114.0   5400.0      19.0         25.0
+
+[41 rows x 25 columns]
+OK
+
+
+OK __main__ :> training_data py> dict(pop())
+OK __main__ :> regressor.predict(x=pop()) .s
+      0: <generator object _as_iterable at 0x000002025F6E5518> (<class 'generator'>)
+OK constant result
+OK result <py> [i for i in tos()] </pyV> .s cr
+      0: <generator object _as_iterable at 0x000002025F6E5518> (<class 'generator'>)
+      3: [16000.075, 16000.075, 19376.029, 10224.96, 15104.878, 15102.778, 15083.122, 18425.811, 17628.58, 9963.0742, 9908.7383, 15852.803, 16252.431, 21576.451, 23637.518, 24844.49, 25795.01, 2008.6404, 6249.2827, 6788.896, 5837.3735, 6021.228, 9171.1563, 6223.9634, 6438.1411, 6438.1411, 9214.6611, 12984.818, 16699.549, 4524.5181, 4918.7271, 5430.0493, 6482.8999, 6608.2905, 6837.2466, 7397.562, 9490.0449, 9905.4004, 10348.477, 10891.575, 12112.117, 10702.418, 13277.265, 16522.725, 29402.256, 31723.986, 33545.844, 7131.8511, 7053.5435, 7092.7271, 7257.1187, 7296.1206, 9980.2197, 9980.2197, 10019.405, 11800.456, 11702.247, 12109.19, 11702.247, 12109.19, 13554.416, 12184.978, 15225.975, 16683.232, 23703.615, 25481.309, 23630.311, 25655.535, 28328.15, 25860.994, 31779.742, 30373.025, 20141.682, 5527.8745, 5915.4263, 6385.6392, 8567.3574, 10945.624, 10799.771, 19190.281, 19879.893, 19919.076, 11511.976, 11825.45, 11626.481, 11418.533, 6482.6616, 7210.8228, 6709.9312, 6931.3384, 7857.2134, 6968.5483, 7537.6509, 7189.9556, 7959.0923, 6809.7456, 11221.335, 11090.688, 19638.463, 21472.193, 19578.584, 18616.479, 20032.096, 18491.346, 16457.418, 18922.885, 20572.514, 23436.17, 16856.184, 19353.912, 20984.66, 23867.197, 16888.445, 19353.912, 17740.289, 6144.6353, 9091.375, 6121.9536, 6314.8677, 8032.6606, 13555.276, 19114.381, 15134.48, 19734.879, 19734.879, 20075.906, 19783.432, 18953.098, 13698.952, 14724.427, 14094.522, 15218.151, 15680.819, 16721.904, 8879.4072, 10511.522, 11438.765, 9789.6318, 10799.233, 11342.974, 12060.788, 13599.595, 11263.027, 12437.794, 12494.538, 15050.138, 8008.0977, 8542.2607, 8523.0928, 10499.58, 10692.979, 16959.105, 9091.5205, 9270.5244, 10786.749, 10449.267, 8831.9951, 9472.4521, 9655.2822, 8728.293] (<class 'list'>)
+
+[
+16000.075, 
+16000.075, 
+19376.029, 
+10224.96, 
+15104.878, 
+15102.778, 
+15083.122, 
+18425.811, 
+17628.58, 
+9963.0742, 
+9908.7383, 
+15852.803, 
+16252.431, 
+21576.451, 
+23637.518, 
+24844.49, 
+25795.01, 
+2008.6404, 
+6249.2827, 
+6788.896, 
+5837.3735, 
+6021.228, 
+9171.1563, 
+6223.9634, 
+6438.1411, 
+6438.1411, 
+9214.6611, 
+12984.818, 
+16699.549, 
+4524.5181, 
+4918.7271, 
+5430.0493, 
+6482.8999, 
+6608.2905, 
+6837.2466, 
+7397.562, 
+9490.0449, 
+9905.4004, 
+10348.477, 
+10891.575, 
+12112.117, 
+10702.418, 
+13277.265, 
+16522.725, 
+29402.256, 
+31723.986, 
+33545.844, 
+7131.8511, 
+7053.5435, 
+7092.7271, 
+7257.1187, 
+7296.1206, 
+9980.2197, 
+9980.2197, 
+10019.405, 
+11800.456, 
+11702.247, 
+12109.19, 
+11702.247, 
+12109.19, 
+13554.416, 
+12184.978, 
+15225.975, 
+16683.232, 
+23703.615, 
+25481.309, 
+23630.311, 
+25655.535, 
+28328.15, 
+25860.994, 
+31779.742, 
+30373.025, 
+20141.682, 
+5527.8745, 
+5915.4263, 
+6385.6392, 
+8567.3574, 
+10945.624, 
+10799.771, 
+19190.281, 
+19879.893, 
+19919.076, 
+11511.976, 
+11825.45, 
+11626.481, 
+11418.533, 
+6482.6616, 
+7210.8228, 
+6709.9312, 
+6931.3384, 
+7857.2134, 
+6968.5483, 
+7537.6509, 
+7189.9556, 
+7959.0923, 
+6809.7456, 
+11221.335, 
+11090.688, 
+19638.463, 
+21472.193, 
+19578.584, 
+18616.479, 
+20032.096, 
+18491.346, 
+16457.418, 
+18922.885, 
+20572.514, 
+23436.17, 
+16856.184, 
+19353.912, 
+20984.66, 
+23867.197, 
+16888.445, 
+19353.912, 
+17740.289, 
+6144.6353, 
+9091.375, 
+6121.9536, 
+6314.8677, 
+8032.6606, 
+13555.276, 
+19114.381, 
+15134.48, 
+19734.879, 
+19734.879, 
+20075.906, 
+19783.432, 
+18953.098, 
+13698.952, 
+14724.427, 
+14094.522, 
+15218.151, 
+15680.819, 
+16721.904, 
+8879.4072, 
+10511.522, 
+11438.765, 
+9789.6318, 
+10799.233, 
+11342.974, 
+12060.788, 
+13599.595, 
+11263.027, 
+12437.794, 
+12494.538, 
+15050.138, 
+8008.0977, 
+8542.2607, 
+8523.0928, 
+10499.58, 
+10692.979, 
+16959.105, 
+9091.5205, 
+9270.5244, 
+10786.749, 
+10449.267, 
+8831.9951, 
+9472.4521, 
+9655.2822, 
+8728.293
+] 
+(<class 'list'>)
+
+OK __main__ :> training_data['make'] . cr
+OK  __main__ :> training_data['make'] py: print(dict(pop()))
+{0: 'alfa-romero', 1: 'alfa-romero', 2: 'alfa-romero', 3: 'audi', 4: 'audi', 5: 'audi', 6: 'audi', 7: 'audi', 8: 'audi', 10: 'bmw', 11: 'bmw', 12: 'bmw', 13: 'bmw', 14: 'bmw', 15: 'bmw', 16: 'bmw', 17: 'bmw', 18: 'chevrolet', 19: 'chevrolet', 20: 'chevrolet', 21: 'dodge', 22: 'dodge', 23: 'dodge', 24: 'dodge', 25: 'dodge', 26: 'dodge', 27: 'dodge', 28: 'dodge', 29: 'dodge', 30: 'honda', 31: 'honda', 32: 'honda', 33: 'honda', 34: 'honda', 35: 'honda', 36: 'honda', 37: 'honda', 38: 'honda', 39: 'honda', 40: 'honda', 41: 'honda', 42: 'honda', 43: 'isuzu', 46: 'isuzu', 47: 'jaguar', 48: 'jaguar', 49: 'jaguar', 50: 'mazda', 51: 'mazda', 52: 'mazda', 53: 'mazda', 54: 'mazda', 55: 'mazda', 56: 'mazda', 57: 'mazda', 58: 'mazda', 59: 'mazda', 60: 'mazda', 61: 'mazda', 62: 'mazda', 63: 'mazda', 64: 'mazda', 65: 'mazda', 66: 'mazda', 67: 'mercedes-benz', 68: 'mercedes-benz', 69: 'mercedes-benz', 70: 'mercedes-benz', 71: 'mercedes-benz', 72: 'mercedes-benz', 73: 'mercedes-benz', 74: 'mercedes-benz', 75: 'mercury', 76: 'mitsubishi', 77: 'mitsubishi', 78: 'mitsubishi', 79: 'mitsubishi', 80: 'mitsubishi', 81: 'mitsubishi', 82: 'mitsubishi', 83: 'mitsubishi', 84: 'mitsubishi', 85: 'mitsubishi', 86: 'mitsubishi', 87: 'mitsubishi', 88: 'mitsubishi', 89: 'nissan', 90: 'nissan', 91: 'nissan', 92: 'nissan', 93: 'nissan', 94: 'nissan', 95: 'nissan', 96: 'nissan', 97: 'nissan', 98: 'nissan', 99: 'nissan', 100: 'nissan', 101: 'nissan', 102: 'nissan', 103: 'nissan', 104: 'nissan', 105: 'nissan', 106: 'nissan', 107: 'peugot', 108: 'peugot', 109: 'peugot', 110: 'peugot', 111: 'peugot', 112: 'peugot', 113: 'peugot', 114: 'peugot', 115: 'peugot', 116: 'peugot', 117: 'peugot', 118: 'plymouth', 119: 'plymouth', 120: 'plymouth', 121: 'plymouth', 122: 'plymouth', 123: 'plymouth', 124: 'plymouth', 125: 'porsche', 126: 'porsche', 127: 'porsche', 128: 'porsche', 130: 'renault', 131: 'renault', 132: 'saab', 133: 'saab', 134: 'saab', 135: 'saab', 136: 'saab', 137: 'saab', 138: 'subaru', 139: 'subaru', 140: 'subaru', 141: 'subaru', 142: 'subaru', 143: 'subaru', 144: 'subaru', 145: 'subaru', 146: 'subaru', 147: 'subaru', 148: 'subaru', 149: 'subaru', 150: 'toyota', 151: 'toyota', 152: 'toyota', 153: 'toyota', 154: 'toyota', 155: 'toyota', 156: 'toyota', 157: 'toyota', 158: 'toyota', 159: 'toyota', 160: 'toyota', 161: 'toyota', 162: 'toyota', 163: 'toyota'}
+OK
+
+
+[ ] Hopefully can find the way to specify tmp path --> No, not in predict()
+
+OK __main__ :> regressor.predict py: help(pop())
+Help on method predict in module tensorflow.contrib.learn.python.learn.estimators.linear:
+predict(x=None, input_fn=None, batch_size=None, outputs=None, as_iterable=True) 
+    method of 
+    tensorflow.contrib.learn.python.learn.estimators.linear.LinearRegressor 
+    instance
+    Returns predictions for given features. (deprecated arguments) (deprecated arguments)
+    
+    SOME ARGUMENTS ARE DEPRECATED. They will be removed after 2016-09-15.
+    Instructions for updating:
+    The default behavior of predict() is changing. The default value for
+    as_iterable will change to True, and then the flag will be removed
+    altogether. The behavior of this flag is described below.
+
+    SOME ARGUMENTS ARE DEPRECATED. They will be removed after 2017-03-01.
+    Instructions for updating:
+    Please switch to predict_scores, or set `outputs` argument.
+
+    By default, returns predicted scores. But this default will be dropped
+    soon. Users should either pass `outputs`, or call `predict_scores` method.
+
+    Args:
+      x: features.
+      input_fn: Input function. If set, x must be None.
+      batch_size: Override default batch size.
+      outputs: list of `str`, name of the output to predict.
+        If `None`, returns scores.
+      as_iterable: If True, return an iterable which keeps yielding predictions
+        for each example until inputs are exhausted. Note: The inputs must
+        terminate if you want the iterable to terminate (e.g. be sure to pass
+        num_epochs=1 if you are using something like read_batch_features).
+
+    Returns:
+      Numpy array of predicted scores (or an iterable of predicted scores if
+      as_iterable is True). If `label_dimension == 1`, the shape of the output
+      is `[batch_size]`, otherwise the shape is `[batch_size, label_dimension]`.
+      If `outputs` is set, returns a dict of predictions.
+
+
+
+OK __main__ :> tf.contrib.learn.LinearRegressor . cr
+<class 'tensorflow.contrib.learn.python.learn.estimators.linear.LinearRegressor'>
+OK __main__ :> tf.contrib.learn.LinearRegressor py: help(pop())
+Help on class LinearRegressor in module tensorflow.contrib.learn.python.learn.estimators.linear:
+
+class LinearRegressor(tensorflow.contrib.learn.python.learn.estimators.estimator.Estimator)
+ |  Linear regressor model.
+ |
+ |  Train a linear regression model to predict label value given observation of
+ |  feature values.
+ |
+ |  Example:
+ |
+ |  ```python
+ |  sparse_column_a = sparse_column_with_hash_bucket(...)
+ |  sparse_column_b = sparse_column_with_hash_bucket(...)
+ |
+ |  sparse_feature_a_x_sparse_feature_b = crossed_column(...)
+ |
+ |  estimator = LinearRegressor(
+ |      feature_columns=[sparse_column_a, sparse_feature_a_x_sparse_feature_b])
+ |
+ |  # Input builders
+ |  def input_fn_train: # returns x, y
+ |    ...
+ |  def input_fn_eval: # returns x, y
+ |    ...
+ |  estimator.fit(input_fn=input_fn_train)
+ |  estimator.evaluate(input_fn=input_fn_eval)
+ |  estimator.predict(x=x)
+ |  ```
+ |
+ |  Input of `fit` and `evaluate` should have following features,
+ |    otherwise there will be a KeyError:
+ |
+ |  * if `weight_column_name` is not `None`:
+ |    key=weight_column_name, value=a `Tensor`
+ |  * for column in `feature_columns`:
+ |    - if isinstance(column, `SparseColumn`):
+ |        key=column.name, value=a `SparseTensor`
+ |    - if isinstance(column, `WeightedSparseColumn`):
+ |        {key=id column name, value=a `SparseTensor`,
+ |         key=weight column name, value=a `SparseTensor`}
+ |    - if isinstance(column, `RealValuedColumn`):
+ |        key=column.name, value=a `Tensor`
+ |
+ |  Method resolution order:
+ |      LinearRegressor
+ |      tensorflow.contrib.learn.python.learn.estimators.estimator.Estimator
+ |      tensorflow.contrib.learn.python.learn.estimators.estimator.BaseEstimator
+ |      tensorflow.contrib.learn.python.learn.estimators._sklearn._BaseEstimator
+ |      tensorflow.contrib.learn.python.learn.evaluable.Evaluable
+ |      tensorflow.contrib.learn.python.learn.trainable.Trainable
+ |      builtins.object
+ |
+ |  Methods defined here:
+ |
+ |  __init__(self, feature_columns, model_dir=None, weight_column_name=None, 
+        optimizer=None, gradient_clip_norm=None, enable_centered_bias=False, 
+        label_dimension=1, _joint_weights=False, config=None, 
+        feature_engineering_fn=None)
+ |      Construct a `LinearRegressor` estimator object.
+ |
+ |      Args:
+ |        feature_columns: An iterable containing all the feature columns used by
+ |          the model. All items in the set should be instances of classes derived
+ |          from `FeatureColumn`.
+ |        model_dir: Directory to save model parameters, graph, etc. This can
+ |          also be used to load checkpoints from the directory into a estimator
+ |          to continue training a previously saved model.
+ |        weight_column_name: A string defining feature column name representing
+ |          weights. It is used to down weight or boost examples during training. It
+ |          will be multiplied by the loss of the example.
+ |        optimizer: An instance of `tf.Optimizer` used to train the model. If
+ |          `None`, will use an Ftrl optimizer.
+ |        gradient_clip_norm: A `float` > 0. If provided, gradients are clipped
+ |          to their global norm with this clipping ratio. See
+ |          `tf.clip_by_global_norm` for more details.
+ |        enable_centered_bias: A bool. If True, estimator will learn a centered
+ |          bias variable for each class. Rest of the model structure learns the
+ |          residual after centered bias.
+ |        label_dimension: Number of regression targets per example. This is the
+ |          size of the last dimension of the labels and logits `Tensor` objects
+ |          (typically, these have shape `[batch_size, label_dimension]`).
+ |        _joint_weights: If True use a single (possibly partitioned) variable to
+ |          store the weights. It's faster, but requires all feature columns are
+ |          sparse and have the 'sum' combiner. Incompatible with SDCAOptimizer.
+ |        config: `RunConfig` object to configure the runtime settings.
+ |        feature_engineering_fn: Feature engineering function. Takes features and
+ |                          labels which are the output of `input_fn` and
+ |                          returns features and labels which will be fed
+ |                          into the model.
+ |
+ |      Returns:
+ |        A `LinearRegressor` estimator.
+ |
+ |  export(self, export_dir, input_fn=None, input_feature_key=None, use_deprecated_input_fn=True, signature_fn=None, default_batch_size=1, exports_to_keep=None)
+ |      See BaseEstimator.export. (deprecated)
+ |
+ |      THIS FUNCTION IS DEPRECATED. It will be removed after 2017-03-25.
+ |      Instructions for updating:
+ |      Please use Estimator.export_savedmodel() instead.
+ |
+ |  predict(self, x=None, input_fn=None, batch_size=None, outputs=None, as_iterable=True) |      Returns predictions for given features. (deprecated arguments) (deprecated arguments)
+ |
+ |      SOME ARGUMENTS ARE DEPRECATED. They will be removed after 2016-09-15.
+ |      Instructions for updating:
+ |      The default behavior of predict() is changing. The default value for
+ |      as_iterable will change to True, and then the flag will be removed
+ |      altogether. The behavior of this flag is described below.
+ |
+ |      SOME ARGUMENTS ARE DEPRECATED. They will be removed after 2017-03-01.
+ |      Instructions for updating:
+ |      Please switch to predict_scores, or set `outputs` argument.
+ |
+ |      By default, returns predicted scores. But this default will be dropped
+ |      soon. Users should either pass `outputs`, or call `predict_scores` method.
+ |
+ |      Args:
+ |        x: features.
+ |        input_fn: Input function. If set, x must be None.
+ |        batch_size: Override default batch size.
+ |        outputs: list of `str`, name of the output to predict.
+ |          If `None`, returns scores.
+ |        as_iterable: If True, return an iterable which keeps yielding predictions
+ |          for each example until inputs are exhausted. Note: The inputs must
+ |          terminate if you want the iterable to terminate (e.g. be sure to pass
+ |          num_epochs=1 if you are using something like read_batch_features).
+ |
+ |      Returns:
+ |        Numpy array of predicted scores (or an iterable of predicted scores if
+ |        as_iterable is True). If `label_dimension == 1`, the shape of the output
+ |        is `[batch_size]`, otherwise the shape is `[batch_size, label_dimension]`.
+ |        If `outputs` is set, returns a dict of predictions.
+ |
+ |  predict_scores(self, x=None, input_fn=None, batch_size=None, as_iterable=True)
+ |      Returns predicted scores for given features. (deprecated arguments)
+ |
+ |      SOME ARGUMENTS ARE DEPRECATED. They will be removed after 2016-09-15.
+ |      Instructions for updating:
+ |      The default behavior of predict() is changing. The default value for
+ |      as_iterable will change to True, and then the flag will be removed
+ |      altogether. The behavior of this flag is described below.
+ |
+ |      Args:
+ |        x: features.
+ |        input_fn: Input function. If set, x must be None.
+ |        batch_size: Override default batch size.
+ |        as_iterable: If True, return an iterable which keeps yielding predictions
+ |          for each example until inputs are exhausted. Note: The inputs must
+ |          terminate if you want the iterable to terminate (e.g. be sure to pass
+ |          num_epochs=1 if you are using something like read_batch_features).
+ |
+ |      Returns:
+ |        Numpy array of predicted scores (or an iterable of predicted scores if
+ |        as_iterable is True). If `label_dimension == 1`, the shape of the output
+ |        is `[batch_size]`, otherwise the shape is `[batch_size, label_dimension]`.
+ |
+ |  ----------------------------------------------------------------------
+ |  Methods inherited from tensorflow.contrib.learn.python.learn.estimators.estimator.Estimator:
+ |
+ |  export_savedmodel(self, export_dir_base, serving_input_fn, default_output_alternative_key=None, assets_extra=None, as_text=False, checkpoint_path=None, graph_rewrite_specs=(GraphRewriteSpec(tags=('serve',), transforms=()),))
+ |      Exports inference graph as a SavedModel into given dir.
+ |
+ |      Args:
+ |        export_dir_base: A string containing a directory to write the exported
+ |          graph and checkpoints.
+ |        serving_input_fn: A function that takes no argument and
+ |          returns an `InputFnOps`.
+ |        default_output_alternative_key: the name of the head to serve when none is
+ |          specified.  Not needed for single-headed models.
+ |        assets_extra: A dict specifying how to populate the assets.extra directory
+ |          within the exported SavedModel.  Each key should give the destination
+ |          path (including the filename) relative to the assets.extra directory.
+ |          The corresponding value gives the full path of the source file to be
+ |          copied.  For example, the simple case of copying a single file without
+ |          renaming it is specified as
+ |          `{'my_asset_file.txt': '/path/to/my_asset_file.txt'}`.
+ |        as_text: whether to write the SavedModel proto in text format.
+ |        checkpoint_path: The checkpoint path to export.  If None (the default),
+ |          the most recent checkpoint found within the model directory is chosen.
+ |        graph_rewrite_specs: an iterable of `GraphRewriteSpec`.  Each element will
+ |          produce a separate MetaGraphDef within the exported SavedModel, tagged
+ |          and rewritten as specified.  Defaults to a single entry using the
+ |          default serving tag ("serve") and no rewriting.
+ |
+ |      Returns:
+ |        The string path to the exported directory.
+ |
+ |      Raises:
+ |        ValueError: if an unrecognized export_type is requested.
+ |
+ |  ----------------------------------------------------------------------
+ |  Methods inherited from tensorflow.contrib.learn.python.learn.estimators.estimator.BaseEstimator:
+ |
+ |  evaluate(self, x=None, y=None, input_fn=None, feed_fn=None, batch_size=None, steps=None, metrics=None, name=None, checkpoint_path=None, hooks=None, log_progress=True)
+ |      See `Evaluable`. (deprecated arguments)
+ |
+ |      SOME ARGUMENTS ARE DEPRECATED. They will be removed after 2016-12-01.
+ |      Instructions for updating:
+ |      Estimator is decoupled from Scikit Learn interface by moving into
+ |      separate class SKCompat. Arguments x, y and batch_size are only
+ |      available in the SKCompat class, Estimator will only accept input_fn.
+ |      Example conversion:
+ |        est = Estimator(...) -> est = SKCompat(Estimator(...))
+ |
+ |      Raises:
+ |        ValueError: If at least one of `x` or `y` is provided, and at least one of
+ |            `input_fn` or `feed_fn` is provided.
+ |            Or if `metrics` is not `None` or `dict`.
+ |
+ |  fit(self, x=None, y=None, input_fn=None, steps=None, batch_size=None, monitors=None, max_steps=None)
+ |      See `Trainable`. (deprecated arguments)
+ |
+ |      SOME ARGUMENTS ARE DEPRECATED. They will be removed after 2016-12-01.
+ |      Instructions for updating:
+ |      Estimator is decoupled from Scikit Learn interface by moving into
+ |      separate class SKCompat. Arguments x, y and batch_size are only
+ |      available in the SKCompat class, Estimator will only accept input_fn.
+ |      Example conversion:
+ |        est = Estimator(...) -> est = SKCompat(Estimator(...))
+ |
+ |      Raises:
+ |        ValueError: If `x` or `y` are not `None` while `input_fn` is not `None`.
+ |        ValueError: If both `steps` and `max_steps` are not `None`.
+ |
+ |  get_variable_names(self)
+ |      Returns list of all variable names in this model.
+ |
+ |      Returns:
+ |        List of names.
+ |
+ |  get_variable_value(self, name)
+ |      Returns value of the variable given by name.
+ |
+ |      Args:
+ |        name: string, name of the tensor.
+ |
+ |      Returns:
+ |        Numpy array - value of the tensor.
+ |
+ |  partial_fit(self, x=None, y=None, input_fn=None, steps=1, batch_size=None, monitors=None)
+ |      Incremental fit on a batch of samples. (deprecated arguments)
+ |
+ |      SOME ARGUMENTS ARE DEPRECATED. They will be removed after 2016-12-01.
+ |      Instructions for updating:
+ |      Estimator is decoupled from Scikit Learn interface by moving into
+ |      separate class SKCompat. Arguments x, y and batch_size are only
+ |      available in the SKCompat class, Estimator will only accept input_fn.
+ |      Example conversion:
+ |        est = Estimator(...) -> est = SKCompat(Estimator(...))
+ |
+ |      This method is expected to be called several times consecutively
+ |      on different or the same chunks of the dataset. This either can
+ |      implement iterative training or out-of-core/online training.
+ |
+ |      This is especially useful when the whole dataset is too big to
+ |      fit in memory at the same time. Or when model is taking long time
+ |      to converge, and you want to split up training into subparts.
+ |
+ |      Args:
+ |        x: Matrix of shape [n_samples, n_features...]. Can be iterator that
+ |           returns arrays of features. The training input samples for fitting the
+ |           model. If set, `input_fn` must be `None`.
+ |        y: Vector or matrix [n_samples] or [n_samples, n_outputs]. Can be
+ |           iterator that returns array of labels. The training label values
+ |           (class labels in classification, real numbers in regression). If set,
+ |           `input_fn` must be `None`.
+ |        input_fn: Input function. If set, `x`, `y`, and `batch_size` must be
+ |          `None`.
+ |        steps: Number of steps for which to train model. If `None`, train forever.
+ |        batch_size: minibatch size to use on the input, defaults to first
+ |          dimension of `x`. Must be `None` if `input_fn` is provided.
+ |        monitors: List of `BaseMonitor` subclass instances. Used for callbacks
+ |          inside the training loop.
+ |
+ |      Returns:
+ |        `self`, for chaining.
+ |
+ |      Raises:
+ |        ValueError: If at least one of `x` and `y` is provided, and `input_fn` is
+ |            provided.
+ |
+ |  ----------------------------------------------------------------------
+ |  Data descriptors inherited from tensorflow.contrib.learn.python.learn.estimators.estimator.BaseEstimator:
+ |
+ |  config
+ |
+ |  model_dir
+ |      Returns a path in which the eval process will look for checkpoints.
+ |
+ |  ----------------------------------------------------------------------
+ |  Data and other attributes inherited from tensorflow.contrib.learn.python.learn.estimators.estimator.BaseEstimator:
+ |
+ |  __metaclass__ = <class 'abc.ABCMeta'>
+ |      Metaclass for defining Abstract Base Classes (ABCs).
+ |
+ |      Use this metaclass to create an ABC.  An ABC can be subclassed
+ |      directly, and then acts as a mix-in class.  You can also register
+ |      unrelated concrete classes (even built-in classes) and unrelated
+ |      ABCs as 'virtual subclasses' -- these and their descendants will
+ |      be considered subclasses of the registering ABC by the built-in
+ |      issubclass() function, but the registering ABC won't show up in
+ |      their MRO (Method Resolution Order) nor will method
+ |      implementations defined by the registering ABC be callable (not
+ |      even via super()).
+ |
+ |  ----------------------------------------------------------------------
+ |  Methods inherited from tensorflow.contrib.learn.python.learn.estimators._sklearn._BaseEstimator:
+ |
+ |  __repr__(self)
+ |      Return repr(self).
+ |
+ |  get_params(self, deep=True)
+ |      Get parameters for this estimator.
+ |
+ |      Args:
+ |        deep: boolean, optional
+ |
+ |          If `True`, will return the parameters for this estimator and
+ |          contained subobjects that are estimators.
+ |
+ |      Returns:
+ |        params : mapping of string to any
+ |        Parameter names mapped to their values.
+ |
+ |  set_params(self, **params)
+ |      Set the parameters of this estimator.
+ |
+ |      The method works on simple estimators as well as on nested objects
+ |      (such as pipelines). The former have parameters of the form
+ |      ``<component>__<parameter>`` so that it's possible to update each
+ |      component of a nested object.
+ |
+ |      Args:
+ |        **params: Parameters.
+ |
+ |      Returns:
+ |        self
+ |
+ |      Raises:
+ |        ValueError: If params contain invalid names.
+ |
+ |  ----------------------------------------------------------------------
+ |  Data descriptors inherited from tensorflow.contrib.learn.python.learn.estimators._sklearn._BaseEstimator:
+ |
+ |  __dict__
+ |      dictionary for instance variables (if defined)
+ |
+ |  __weakref__
+ |      list of weak references to the object (if defined)
+
+OK
+
+
+[ ] 2018.1.5 16:37 帶著有指定 model_dir 的 regressor 重跑一遍 --> 果然成功了！
+
+c:\Users\hcche\Documents\GitHub\Estimator-demo-using-Automobile-dataset>python automobile.py
+p e f o r t h    v1.14
+source code http://github.com/hcchengithub/peforth
+Type 'peforth.ok()' to enter forth interpreter, 'exit' to come back.
+Please make sure that version >= 1.2
+1.4.0
+
+Type 'exit' to continue or 'bye' to abort
+OK exit
+WARNING:tensorflow:RunConfig.uid (from tensorflow.contrib.learn.python.learn.estimators.run_config) is experimental and may change or be removed at any time, and without warning.
+WARNING:tensorflow:RunConfig.uid (from tensorflow.contrib.learn.python.learn.estimators.run_config) is experimental and may change or be removed at any time, and without warning.
+WARNING:tensorflow:From C:\Users\hcche\AppData\Local\Programs\Python\Python36\lib\site-packages\tensorflow\contrib\learn\python\learn\monitors.py:267: BaseMonitor.__init__ (from tensorflow.contrib.learn.python.learn.monitors) is deprecated and will be removed after 2016-12-05.
+Instructions for updating:
+Monitors are deprecated. Please use tf.train.SessionRunHook.
+WARNING:tensorflow:From C:\Users\hcche\AppData\Local\Programs\Python\Python36\lib\site-packages\tensorflow\contrib\learn\python\learn\estimators\linear.py:173: get_global_step (from tensorflow.contrib.framework.python.ops.variables) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please switch to tf.train.get_global_step
+2018-01-05 16:21:49.309594: I C:\tf_jenkins\home\workspace\rel-win\M\windows\PY\36\tensorflow\core\platform\cpu_feature_guard.cc:137] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX AVX2
+OK
+Done, now up to you to play with the AI!
+OK __main__ :> eval_data py> dict(pop())
+OK __main__ :> regressor.predict(x=pop()) .s
+WARNING:tensorflow:From C:\Users\hcche\AppData\Local\Programs\Python\Python36\lib\site-packages\tensorflow\python\util\deprecation.py:381: calling LinearRegressor.predict (from tensorflow.contrib.learn.python.learn.estimators.linear) with outputs=None is deprecated and will be removed after 2017-03-01.
+Instructions for updating:
+Please switch to predict_scores, or set `outputs` argument.
+WARNING:tensorflow:From C:\Users\hcche\AppData\Local\Programs\Python\Python36\lib\site-packages\tensorflow\contrib\learn\python\learn\estimators\linear.py:830: calling BaseEstimator.predict (from tensorflow.contrib.learn.python.learn.estimators.estimator) with x is deprecated and will be removed after 2016-12-01.
+Instructions for updating:
+Estimator is decoupled from Scikit Learn interface by moving into
+separate class SKCompat. Arguments x, y and batch_size are only
+available in the SKCompat class, Estimator will only accept input_fn.
+Example conversion:
+  est = Estimator(...) -> est = SKCompat(Estimator(...))
+      0: <generator object _as_iterable at 0x00000219A2962830> (<class 'generator'>)
+OK constant result result <py> [i for i in tos()] </pyV> .s
+      0: <generator object _as_iterable at 0x00000219A2962830> (<class 'generator'>)
+      1: [8913.5703, 8328.1494, 8560.2568, 14122.857, 14091.504, 14155.697, 15212.371, 15433.33, 17521.576, 13037.545, 13153.453, 13773.727, 13808.871, 14118.607, 17606.248, 17940.904, 20373.373, 21773.629, 9224.8936, 9710.9316, 9665.0605, 10151.099, 10644.905, 10865.028, 10894.525, 12044.065, 7644.6519, 16216.209, 14518.637, 14152.674, 16584.334, 17958.057, 16743.486, 17999.635, 19044.709, 20340.051, 17017.83, 18987.383, 18632.086, 19630.719, 18015.119] (<class 'list'>)
+OK
+
+
+
+[ ] 2018.1.5 17:14 這次完全搞懂了，利用 peforth 直接取得 estimator 就不用另外定義 
+    可疑的 regressor 了
+    
+    c:\Users\hcche\Documents\GitHub\Estimator-demo-using-Automobile-dataset>python automobile.py
+    p e f o r t h    v1.14
+    source code http://github.com/hcchengithub/peforth
+    Type 'peforth.ok()' to enter forth interpreter, 'exit' to come back.
+
+    Please make sure that version >= 1.2
+    1.4.0
+
+    Type 'exit' to continue or 'bye' to abort
+    OK exit
+    WARNING:tensorflow:RunConfig.uid (from tensorflow.contrib.learn.python.learn.estimators.run_config) is experimental and may change or be removed at any time, and without warning.
+    WARNING:tensorflow:RunConfig.uid (from tensorflow.contrib.learn.python.learn.estimators.run_config) is experimental and may change or be removed at any time, and without warning.
+    WARNING:tensorflow:From C:\Users\hcche\AppData\Local\Programs\Python\Python36\lib\site-packages\tensorflow\contrib\learn\python\learn\monitors.py:267: BaseMonitor.__init__ (from tensorflow.contrib.learn.python.learn.monitors) is deprecated and will be removed after 2016-12-05.
+    Instructions for updating:
+    Monitors are deprecated. Please use tf.train.SessionRunHook.
+    WARNING:tensorflow:From C:\Users\hcche\AppData\Local\Programs\Python\Python36\lib\site-packages\tensorflow\contrib\learn\python\learn\estimators\linear.py:173: get_global_step (from tensorflow.contrib.framework.python.ops.variables) is deprecated and will be removed in a future version.
+    Instructions for updating:
+    Please switch to tf.train.get_global_step
+    2018-01-05 17:09:46.594748: I C:\tf_jenkins\home\workspace\rel-win\M\windows\PY\36\tensorflow\core\platform\cpu_feature_guard.cc:137] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX AVX2
+    OK
+    Done, now up to you to play with the AI!
+    OK .s
+    empty
+
+    OK words
+    code end-code \ // <selftest> </selftest> bye /// immediate stop compyle trim indent -indent <py> </py> </pyV> words . cr help interpret-only compile-only literal reveal privacy (create) : ; ( BL CR word ' , [compile] py: py> py:~ py>~ 0branch here! here swap ! @ ? >r r> r@ drop dup over 0< + * - / 1+ 2+ 1- 2- compile if then compiling char last version execute cls private nonprivate (space) exit ret rescan-word-hash (') branch bool and or not (forget) AND OR NOT XOR true false "" [] {} none >> << 0= 0> 0<> 0<= 0>= = == > < != >= <= abs max min doVar doNext depth pick roll space [ ] colon-word create (marker) marker next abort alias <> public nip rot -rot 2drop 2dup invert negate within ['] allot for begin until again ahead never repeat aft else while ?stop ?dup variable +! chars spaces .( ." .' s" s' s` does> count accept <accept> nop </accept>  refill [else] [if] [then] (::) (:>) :: :> ::~ :>~ "msg"abort abort" "msg"?abort ?abort" '<text> (<text>) <text> </text> <comment> </comment> (constant) constant value to tib. >t t@ t> [begin] [again] [until] [for] [next] __main__ import modules int float drops dropall char>ASCII ASCII>char CRLF ASCII .s (*debug*) *debug* readTextFile writeTextFile tib.insert dictate sinclude include break-include type obj>keys obj2dict stringify toString .literal .function (dump) dump dump2ret d (see) see slice screen-buffer display-off display-on WshShell inport harry_port OK dir keys (pyclude) pyclude .members .source dos cd ### description expected_rstack expected_stack test-result [all-pass] *** all-pass [r r] [d d] [p p] --- estimator
+    OK estimator :> model_dir . cr
+    /tmp/output_dir
+    OK .s
+    empty
+
+    OK         __main__ :> eval_data py> dict(pop())
+    OK         estimator :> predict(x=pop()) <py> [i for i in tos()] </pyV> .s
+    WARNING:tensorflow:From C:\Users\hcche\AppData\Local\Programs\Python\Python36\lib\site-packages\tensorflow\python\util\deprecation.py:381: calling LinearRegressor.predict (from tensorflow.contrib.learn.python.learn.estimators.linear) with outputs=None is deprecated and will be removed after 2017-03-01.
+    Instructions for updating:
+    Please switch to predict_scores, or set `outputs` argument.
+    WARNING:tensorflow:From C:\Users\hcche\AppData\Local\Programs\Python\Python36\lib\site-packages\tensorflow\contrib\learn\python\learn\estimators\linear.py:830: calling BaseEstimator.predict (from tensorflow.contrib.learn.python.learn.estimators.estimator) with x is deprecated and will be removed after 2016-12-01.
+    Instructions for updating:
+    Estimator is decoupled from Scikit Learn interface by moving into
+    separate class SKCompat. Arguments x, y and batch_size are only
+    available in the SKCompat class, Estimator will only accept input_fn.
+    Example conversion:
+      est = Estimator(...) -> est = SKCompat(Estimator(...))
+          0: <generator object _as_iterable at 0x000001FC2C6D2C50> (<class 'generator'>)
+          1: [8913.3389, 8308.6182, 8540.8213, 14110.35, 14079.014, 14142.436, 15199.271, 15419.371, 17507.143, 13029.415, 13149.531, 13765.071, 13800.103, 14109.767, 17586.846, 17921.291, 20345.182, 21738.92, 9228.6484, 9701.5625, 9666.6533, 10139.566, 10633.109, 10866.222, 10878.761, 12020.095, 7642.5405, 16187.499, 14511.044, 14131.028, 16565.107, 17936.807, 16724.201, 17978.393, 19020.17, 20313.533, 16998.342, 18961.502, 18606.131, 19618.875, 17995.02] (<class 'list'>)
+    OK    
