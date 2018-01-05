@@ -1,0 +1,269 @@
+OK __main__ :> regressor . cr
+LinearRegressor(
+    params = {
+        'head' :  < tensorflow.contrib.learn.python.learn.estimators.head._RegressionHead object at 0x000002025CBB29B0 > ,
+        'feature_columns' : [
+            _NumericColumn(key = 'symboling', shape = (1, ), default_value = None, dtype = tf.float32, normalizer_fn = None), 
+            _NumericColumn(key = 'normalized-losses', shape = (1, ), default_value = None, dtype = tf.float32, normalizer_fn = None), 
+            _HashedCategoricalColumn(key = 'make', hash_bucket_size = 50, dtype = tf.string), 
+            _VocabularyListCategoricalColumn(key = 'fuel-type', vocabulary_list = ('diesel', 'gas'), dtype = tf.string, default_value = -1, num_oov_buckets = 0), 
+            _VocabularyListCategoricalColumn(key = 'aspiration', vocabulary_list = ('std', 'turbo'), dtype = tf.string, default_value = -1, num_oov_buckets = 0), 
+            _VocabularyListCategoricalColumn(key = 'num-of-doors', vocabulary_list = ('two', 'four'), dtype = tf.string, default_value = -1, num_oov_buckets = 0), 
+            _VocabularyListCategoricalColumn(key = 'body-style', vocabulary_list = ('hardtop', 'wagon', 'sedan', 'hatchback', 'convertible'), dtype = tf.string, default_value = -1, num_oov_buckets = 0), 
+            _VocabularyListCategoricalColumn(key = 'drive-wheels', vocabulary_list = ('4wd', 'rwd', 'fwd'), dtype = tf.string, default_value = -1, num_oov_buckets = 0), 
+            _VocabularyListCategoricalColumn(key = 'engine-location', vocabulary_list = ('front', 'rear'), dtype = tf.string, default_value = -1, num_oov_buckets = 0), 
+            _NumericColumn(key = 'wheel-base', shape = (1, ), default_value = None, dtype = tf.float32, normalizer_fn = None), 
+            _NumericColumn(key = 'length', shape = (1, ), default_value = None, dtype = tf.float32, normalizer_fn = None), 
+            _NumericColumn(key = 'width', shape = (1, ), default_value = None, dtype = tf.float32, normalizer_fn = None), 
+            _NumericColumn(key = 'height', shape = (1, ), default_value = None, dtype = tf.float32, normalizer_fn = None), 
+            _NumericColumn(key = 'curb-weight', shape = (1, ), default_value = None, dtype = tf.float32, normalizer_fn = None), 
+            _VocabularyListCategoricalColumn(key = 'engine-type', vocabulary_list = ('dohc', 'dohcv', 'l', 'ohc', 'ohcf', 'ohcv', 'rotor'), dtype = tf.string, default_value = -1, num_oov_buckets = 0), 
+            _VocabularyListCategoricalColumn(key = 'num-of-cylinders', vocabulary_list = ('eight', 'five', 'four', 'six', 'three', 'twelve', 'two'), dtype = tf.string, default_value = -1, num_oov_buckets = 0), 
+            _NumericColumn(key = 'engine-size', shape = (1, ), default_value = None, dtype = tf.float32, normalizer_fn = None), 
+            _VocabularyListCategoricalColumn(key = 'fuel-system', vocabulary_list = ('1bbl', '2bbl', '4bbl', 'idi', 'mfi', 'mpfi', 'spdi', 'spfi'), dtype = tf.string, default_value = -1, num_oov_buckets = 0), 
+            _NumericColumn(key = 'bore', shape = (1, ), default_value = None, dtype = tf.float32, normalizer_fn = None), 
+            _NumericColumn(key = 'stroke', shape = (1, ), default_value = None, dtype = tf.float32, normalizer_fn = None), 
+            _NumericColumn(key = 'compression-ratio', shape = (1, ), default_value = None, dtype = tf.float32, normalizer_fn = None), 
+            _NumericColumn(key = 'horsepower', shape = (1, ), default_value = None, dtype = tf.float32, normalizer_fn = None), 
+            _NumericColumn(key = 'peak-rpm', shape = (1, ), default_value = None, dtype = tf.float32, normalizer_fn = None), 
+            _NumericColumn(key = 'city-mpg', shape = (1, ), default_value = None, dtype = tf.float32, normalizer_fn = None), 
+            _NumericColumn(key = 'highway-mpg', shape = (1, ), default_value = None, dtype = tf.float32, normalizer_fn = None)
+            ],
+        'optimizer' : None,
+        'gradient_clip_norm' : None,
+        'joint_weights' : False
+    }
+)
+
+OK
+Failed in </py> (compiling=False): Couldn't find trained model at C:\Users\hcche\AppData\Local\Temp\tmp4ivv0v9j.
+copy /s c:\tmp\output_dir c:\Users\hcche\AppData\Local\Temp\tmp4ivv0v9j 
+is a feasible workaround
+
+__main__ :> eval_data py> dict(pop())
+__main__ :> regressor.predict(x=pop()) .s
+\ <generator object _as_iterable at 0x0000020260E92570>
+constant result 
+
+OK result <py> [i for i in tos()] </pyV> .s cr
+      0: <generator object _as_iterable at 0x0000020260E922B0> (<class 'generator'>)
+      1: [
+      8960.8164, 
+      8341.9082, 
+      8574.4316, 
+      14133.244, 
+      14101.896, 
+      14165.926, 
+      15222.57, 
+      15443.336, 
+      17531.807, 
+      13073.979, 
+      13211.522, 
+      13809.206, 
+      13844.28, 
+      14154.028, 
+      17587.508, 
+      17921.92, 
+      20356.814, 
+      21757.881, 
+      9297.3418, 
+      9746.0703, 
+      9737.7861, 
+      10186.516, 
+      10680.238, 
+      10931.681, 
+      10920.594, 
+      12064.827, 
+      7673.5229, 
+      16225.116, 
+      14583.919, 
+      14185.98, 
+      16600.213, 
+      17974.174, 
+      16759.525, 
+      18015.932, 
+      19038.873, 
+      20334.467, 
+      17035.037, 
+      18981.264, 
+      18625.998, 
+      19664.51, 
+      18031.885
+      ] 
+      (<class 'list'>)
+
+OK __main__ :> eval_data . cr
+     symboling  normalized-losses        make fuel-type aspiration  \
+164          1              168.0      toyota       gas        std
+165          1              168.0      toyota       gas        std
+166          1              168.0      toyota       gas        std
+167          2              134.0      toyota       gas        std
+168          2              134.0      toyota       gas        std
+169          2              134.0      toyota       gas        std
+170          2              134.0      toyota       gas        std
+171          2              134.0      toyota       gas        std
+172          2              134.0      toyota       gas        std
+173         -1               65.0      toyota       gas        std
+174         -1               65.0      toyota    diesel      turbo
+175         -1               65.0      toyota       gas        std
+176         -1               65.0      toyota       gas        std
+177         -1               65.0      toyota       gas        std
+178          3              197.0      toyota       gas        std
+179          3              197.0      toyota       gas        std
+180         -1               90.0      toyota       gas        std
+181         -1                0.0      toyota       gas        std
+182          2              122.0  volkswagen    diesel        std
+183          2              122.0  volkswagen       gas        std
+184          2               94.0  volkswagen    diesel        std
+185          2               94.0  volkswagen       gas        std
+186          2               94.0  volkswagen       gas        std
+187          2               94.0  volkswagen    diesel      turbo
+188          2               94.0  volkswagen       gas        std
+189          3                0.0  volkswagen       gas        std
+190          3              256.0  volkswagen       gas        std
+191          0                0.0  volkswagen       gas        std
+192          0                0.0  volkswagen    diesel      turbo
+193          0                0.0  volkswagen       gas        std
+194         -2              103.0       volvo       gas        std
+195         -1               74.0       volvo       gas        std
+196         -2              103.0       volvo       gas        std
+197         -1               74.0       volvo       gas        std
+198         -2              103.0       volvo       gas      turbo
+199         -1               74.0       volvo       gas      turbo
+200         -1               95.0       volvo       gas        std
+201         -1               95.0       volvo       gas      turbo
+202         -1               95.0       volvo       gas        std
+203         -1               95.0       volvo    diesel      turbo
+204         -1               95.0       volvo       gas      turbo
+
+    num-of-doors   body-style drive-wheels engine-location  wheel-base  \
+164          two    hatchback          rwd           front   94.500000
+165          two        sedan          rwd           front   94.500000
+166          two    hatchback          rwd           front   94.500000
+167          two      hardtop          rwd           front   98.400002
+168          two      hardtop          rwd           front   98.400002
+169          two    hatchback          rwd           front   98.400002
+170          two      hardtop          rwd           front   98.400002
+171          two    hatchback          rwd           front   98.400002
+172          two  convertible          rwd           front   98.400002
+173         four        sedan          fwd           front  102.400002
+174         four        sedan          fwd           front  102.400002
+175         four    hatchback          fwd           front  102.400002
+176         four        sedan          fwd           front  102.400002
+177         four    hatchback          fwd           front  102.400002
+178          two    hatchback          rwd           front  102.900002
+179          two    hatchback          rwd           front  102.900002
+180         four        sedan          rwd           front  104.500000
+181         four        wagon          rwd           front  104.500000
+182          two        sedan          fwd           front   97.300003
+183          two        sedan          fwd           front   97.300003
+184         four        sedan          fwd           front   97.300003
+185         four        sedan          fwd           front   97.300003
+186         four        sedan          fwd           front   97.300003
+187         four        sedan          fwd           front   97.300003
+188         four        sedan          fwd           front   97.300003
+189          two  convertible          fwd           front   94.500000
+190          two    hatchback          fwd           front   94.500000
+191         four        sedan          fwd           front  100.400002
+192         four        sedan          fwd           front  100.400002
+193         four        wagon          fwd           front  100.400002
+194         four        sedan          rwd           front  104.300003
+195         four        wagon          rwd           front  104.300003
+196         four        sedan          rwd           front  104.300003
+197         four        wagon          rwd           front  104.300003
+198         four        sedan          rwd           front  104.300003
+199         four        wagon          rwd           front  104.300003
+200         four        sedan          rwd           front  109.099998
+201         four        sedan          rwd           front  109.099998
+202         four        sedan          rwd           front  109.099998
+203         four        sedan          rwd           front  109.099998
+204         four        sedan          rwd           front  109.099998
+
+        ...       num-of-cylinders  engine-size  fuel-system  bore stroke  \
+164     ...                   four         98.0         2bbl  3.19   3.03
+165     ...                   four         98.0         mpfi  3.24   3.08
+166     ...                   four         98.0         mpfi  3.24   3.08
+167     ...                   four        146.0         mpfi  3.62   3.50
+168     ...                   four        146.0         mpfi  3.62   3.50
+169     ...                   four        146.0         mpfi  3.62   3.50
+170     ...                   four        146.0         mpfi  3.62   3.50
+171     ...                   four        146.0         mpfi  3.62   3.50
+172     ...                   four        146.0         mpfi  3.62   3.50
+173     ...                   four        122.0         mpfi  3.31   3.54
+174     ...                   four        110.0          idi  3.27   3.35
+175     ...                   four        122.0         mpfi  3.31   3.54
+176     ...                   four        122.0         mpfi  3.31   3.54
+177     ...                   four        122.0         mpfi  3.31   3.54
+178     ...                    six        171.0         mpfi  3.27   3.35
+179     ...                    six        171.0         mpfi  3.27   3.35
+180     ...                    six        171.0         mpfi  3.27   3.35
+181     ...                    six        161.0         mpfi  3.27   3.35
+182     ...                   four         97.0          idi  3.01   3.40
+183     ...                   four        109.0         mpfi  3.19   3.40
+184     ...                   four         97.0          idi  3.01   3.40
+185     ...                   four        109.0         mpfi  3.19   3.40
+186     ...                   four        109.0         mpfi  3.19   3.40
+187     ...                   four         97.0          idi  3.01   3.40
+188     ...                   four        109.0         mpfi  3.19   3.40
+189     ...                   four        109.0         mpfi  3.19   3.40
+190     ...                   four        109.0         mpfi  3.19   3.40
+191     ...                   five        136.0         mpfi  3.19   3.40
+192     ...                   four         97.0          idi  3.01   3.40
+193     ...                   four        109.0         mpfi  3.19   3.40
+194     ...                   four        141.0         mpfi  3.78   3.15
+195     ...                   four        141.0         mpfi  3.78   3.15
+196     ...                   four        141.0         mpfi  3.78   3.15
+197     ...                   four        141.0         mpfi  3.78   3.15
+198     ...                   four        130.0         mpfi  3.62   3.15
+199     ...                   four        130.0         mpfi  3.62   3.15
+200     ...                   four        141.0         mpfi  3.78   3.15
+201     ...                   four        141.0         mpfi  3.78   3.15
+202     ...                    six        173.0         mpfi  3.58   2.87
+203     ...                    six        145.0          idi  3.01   3.40
+204     ...                   four        141.0         mpfi  3.78   3.15
+
+    compression-ratio  horsepower peak-rpm  city-mpg  highway-mpg
+164               9.0        70.0   4800.0      29.0         34.0
+165               9.4       112.0   6600.0      26.0         29.0
+166               9.4       112.0   6600.0      26.0         29.0
+167               9.3       116.0   4800.0      24.0         30.0
+168               9.3       116.0   4800.0      24.0         30.0
+169               9.3       116.0   4800.0      24.0         30.0
+170               9.3       116.0   4800.0      24.0         30.0
+171               9.3       116.0   4800.0      24.0         30.0
+172               9.3       116.0   4800.0      24.0         30.0
+173               8.7        92.0   4200.0      29.0         34.0
+174              22.5        73.0   4500.0      30.0         33.0
+175               8.7        92.0   4200.0      27.0         32.0
+176               8.7        92.0   4200.0      27.0         32.0
+177               8.7        92.0   4200.0      27.0         32.0
+178               9.3       161.0   5200.0      20.0         24.0
+179               9.3       161.0   5200.0      19.0         24.0
+180               9.2       156.0   5200.0      20.0         24.0
+181               9.2       156.0   5200.0      19.0         24.0
+182              23.0        52.0   4800.0      37.0         46.0
+183               9.0        85.0   5250.0      27.0         34.0
+184              23.0        52.0   4800.0      37.0         46.0
+185               9.0        85.0   5250.0      27.0         34.0
+186               9.0        85.0   5250.0      27.0         34.0
+187              23.0        68.0   4500.0      37.0         42.0
+188              10.0       100.0   5500.0      26.0         32.0
+189               8.5        90.0   5500.0      24.0         29.0
+190               8.5        90.0   5500.0      24.0         29.0
+191               8.5       110.0   5500.0      19.0         24.0
+192              23.0        68.0   4500.0      33.0         38.0
+193               9.0        88.0   5500.0      25.0         31.0
+194               9.5       114.0   5400.0      23.0         28.0
+195               9.5       114.0   5400.0      23.0         28.0
+196               9.5       114.0   5400.0      24.0         28.0
+197               9.5       114.0   5400.0      24.0         28.0
+198               7.5       162.0   5100.0      17.0         22.0
+199               7.5       162.0   5100.0      17.0         22.0
+200               9.5       114.0   5400.0      23.0         28.0
+201               8.7       160.0   5300.0      19.0         25.0
+202               8.8       134.0   5500.0      18.0         23.0
+203              23.0       106.0   4800.0      26.0         27.0
+204               9.5       114.0   5400.0      19.0         25.0
+
+[41 rows x 25 columns]
+OK
