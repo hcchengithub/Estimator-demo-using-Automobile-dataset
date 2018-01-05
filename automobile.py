@@ -82,25 +82,39 @@ linear_features = [symboling, normalized_losses, make, fuel_type, aspiration, nu
                    height, curb_weight, engine_type, num_of_cylinders, engine_size, fuel_system,
                    bore, stroke, compression_ratio, horsepower, peak_rpm, city_mpg, highway_mpg]
 
-regressor = tf.contrib.learn.LinearRegressor(feature_columns=linear_features)
 def experiment_fn(run_config, params):
-  # This function makes an Experiment, containing an Estimator and inputs for training and evaluation.
-  # You can use params and config here to customize the Estimator depending on the cluster or to use
-  # hyperparameter tuning.
-
+  # This function makes an Experiment, containing an Estimator 
+  # and inputs for training and evaluation.
+  # You can use params and config here to customize the Estimator 
+  # depending on the cluster or to use hyperparameter tuning.
+  
+  # 我要拿 estimator 來玩
+  estimator=tf.contrib.learn.LinearRegressor(
+        feature_columns=linear_features, config=run_config
+        )
+  peforth.vm.push(estimator)
+  peforth.vm.dictate("constant estimator // ( -- obj ) tf.contrib.learn.LinearRegressor")
+  
   # Collect information for training
   return tf.contrib.learn.Experiment(
-    estimator=tf.contrib.learn.LinearRegressor(
-    feature_columns=linear_features, config=run_config),
+    estimator=estimator,
     train_input_fn=training_input_fn,
     train_steps=10000,
-    eval_input_fn=eval_input_fn)
+    eval_input_fn=eval_input_fn
+  )
 # shutil http://www.cnblogs.com/CLTANG/archive/2011/11/15/2249257.html
 import shutil
 shutil.rmtree("/tmp/output_dir", ignore_errors=True)  # 刪除暫存目錄
-tf.contrib.learn.learn_runner.run(
+result = tf.contrib.learn.learn_runner.run(
     experiment_fn, 
     run_config=tf.contrib.learn.RunConfig(model_dir="/tmp/output_dir")
     )
+#regressor = tf.contrib.learn.LinearRegressor(feature_columns=linear_features,model_dir="/tmp/output_dir")
 peforth.ok(cmd="cr .' Done, now up to you to play with the AI!' cr")
 
+# __main__ :> eval_data py> dict(pop()) \ 轉成 dict 
+# estimator :> predict(x=pop()) \ 餵進去給 estimator 得到結果在 generator 裡面
+# <py> [i for i in tos()] </pyV> .s \ 把結果列出來
+# 0: <generator object _as_iterable at 0x000001FC2C6D2C50> (<class 'generator'>)
+# 1: [8913.3389, 8308.6182, 8540.8213, 14110.35, 14079.014, 14142.436, 15199.271, 15419.371, 17507.143, 13029.415, 13149.531, 13765.071, 13800.103, 14109.767, 17586.846, 17921.291, 20345.182, 21738.92, 9228.6484, 9701.5625, 9666.6533, 10139.566, 10633.109, 10866.222, 10878.761, 12020.095, 7642.5405, 16187.499, 14511.044, 14131.028, 16565.107, 17936.807, 16724.201, 17978.393, 19020.17, 20313.533, 16998.342, 18961.502, 18606.131, 19618.875, 17995.02] (<class 'list'>)
+#
