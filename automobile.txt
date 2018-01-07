@@ -56,9 +56,9 @@ is a feasible workaround
         然後就可以用 regressor 來 predict.
 [x] OK __main__ :> regressor.model_dir . cr ==> /tmp/output_dir
     regressor 的 model_dir attribute 是可以查看的。
-[x] 線索應該在 experiment_fn 裡面，餵給 learn_runner 之前應該把 experiment_fn
-    保留下來。 
-    --> Yeah! 直接定義出 forth word estimator 
+[x] 線索應該在 experiment_fn 裡面，從裡面把 regressor
+    保留下來。 ^^^^^^^^^^^^^---------- Yes!! 
+    --> Yeah! 直接定義出 forth word estimator (就是 regressor) 即所求：
         __main__ :> eval_data py> dict(pop())
         estimator :> predict(x=pop()) <py> [i for i in tos()] </pyV> .s
 
